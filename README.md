@@ -2,9 +2,7 @@
 
 Clone repository
 
-`mkdir cryptoconda && cd cryptoconda`
-
-`git clone https://github.com/bbeale/cryptoconda`
+`git clone https://github.com/mufniarz/alpaca-ai-traders.git`
 
 Install dependencies
 
