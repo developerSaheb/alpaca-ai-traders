@@ -175,7 +175,6 @@ class AssetSelector:
             else:
                 if eval_result in calling_fn and len(results.keys()) < poolsize:
 
-                    results[i.symbol] = df
                     num_criteria = 0
                     macd_buysignal = self.macd_buy(df)
                     mfi_buysignal = self.mfi_buy(df)
@@ -193,11 +192,8 @@ class AssetSelector:
 
                     if macd_buysignal and num_criteria >= 1:
                         # display the result if it meets criteria
-
-                        # TODO: make this actually return or append asset selection again
-
+                        results[i.symbol] = df
                         print(i.symbol.ljust(10), "${:.2f}".format(df["close"].iloc[-1]).ljust(10), "${:.2f}".format(df["close"].iloc[-1] - df["close"].iloc[-2]).ljust(10), "{:.2f}%".format(df["close"].pct_change().iloc[-1] - df["close"].pct_change().iloc[-2]).ljust(10), str(macd_buysignal).ljust(10), str(mfi_buysignal).ljust(10), str(vzo_buysignal).ljust(10), str(stoch_buysignal).ljust(10), str(pattern))
-        print("done")
 
     @staticmethod
     def macd_buy(dataframe):
