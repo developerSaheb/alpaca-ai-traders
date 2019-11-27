@@ -7,6 +7,7 @@ Clone repository
 
 Install Anaconda Python 3.7 version
 https://www.anaconda.com/distribution/#windows
+REQUIRED: Check Add PATHS on install
 
 `conda env create -f requirements.txt -n aitrader`
 
