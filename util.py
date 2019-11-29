@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import date
+from pandas.io.json import json_normalize
 import alpaca_trade_api as tradeapi
 import pandas as pd
 import numpy as np
 import configparser
+import json
 import sys
 import os
 
@@ -192,3 +194,27 @@ def logarithmic_scale(series):
     :return:
     """
     return np.log(series) - np.log(series.shift(1))
+
+def convert_json_to_df(obj):
+    """Convert JSON to DataFrame.
+
+    :param: JSON
+    :return: DataFrame
+    """
+    return json_normalize(json.loads(json.dumps(obj)))
+
+def convert_obj_to_df(obj):
+    """Convert Object to DataFrame.
+
+    :param: Python Object
+    :return: DataFrame
+    """
+    return json_normalize(json.loads(json.dumps(obj.__dict__)))
+
+def convert_obj_list_to_df(obj):
+    """Convert Object List to DataFrame.
+
+    :param: Python Object
+    :return: DataFrame
+    """
+    return json_normalize(json.loads(json.dumps([ob.__dict__ for ob in obj])))

@@ -1,31 +1,39 @@
 # Instructions
 
-Clone repository
-`git clone https://github.com/mufniarz/alpaca-ai-traders.git`
+1. Clone repository
 
-`cd alpaca-ai-traders`
+    `git clone https://github.com/mufniarz/alpaca-ai-traders.git`
 
-Install Anaconda Python 3.7 version
-https://www.anaconda.com/distribution/#windows
-REQUIRED: Check Add PATHS on install
+    `cd alpaca-ai-traders`
 
-`conda env create -f requirements.txt -n aitrader`
+2. Install Anaconda Python 3.7 version
+    - https://www.anaconda.com/distribution/#windows
+    - REQUIRED: Check Add PATHS on install
 
-`conda activate aitrader`
+    `conda env create -f environment.yml -n aitrader`
 
-Update conda environment
-`conda env update -f requirements.txt -n aitrader`
+    `conda activate aitrader`
 
-OR
+    Update conda environment (optional if new packages added)
 
-Install dependencies
-`pip install -r requirements.txt`
+    `conda env update -f environment.yml -n aitrader`
 
-Add values to `config.ini`
+3. Switch to your environment.
+    
+    `conda activate aitrader`
 
-Run in notebook
-`jupyter notebook`
+4. Install dependencies
+
+    `pip install -r requirements.txt`
+
+5. Add values to `config.ini`
+    - Set keys
+
+6. Run in notebook
+
+    `jupyter notebook`
 
 
-Run the script
-`python cryptoconda.py`   
+### Run the script
+
+    `python cryptoconda.py`   
