@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 from pandas.io.json import json_normalize
+from pandas.errors import EmptyDataError
 import alpaca_trade_api as tradeapi
 import pandas as pd
 import numpy as np
 import configparser
+import time
 import json
 import sys
 import os
@@ -195,6 +197,7 @@ def logarithmic_scale(series):
     """
     return np.log(series) - np.log(series.shift(1))
 
+
 def convert_json_to_df(obj):
     """Convert JSON to DataFrame.
 
@@ -202,6 +205,7 @@ def convert_json_to_df(obj):
     :return: DataFrame
     """
     return json_normalize(json.loads(json.dumps(obj)))
+
 
 def convert_obj_to_df(obj):
     """Convert Object to DataFrame.
@@ -211,6 +215,7 @@ def convert_obj_to_df(obj):
     """
     return json_normalize(json.loads(json.dumps(obj.__dict__)))
 
+
 def convert_obj_list_to_df(obj):
     """Convert Object List to DataFrame.
 
@@ -218,3 +223,27 @@ def convert_obj_list_to_df(obj):
     :return: DataFrame
     """
     return json_normalize(json.loads(json.dumps([ob.__dict__ for ob in obj])))
+
+
+def df2csv(dataframe, ticker):
+    """Save the contents of a dataframe to a csv file in the data/ directory.
+
+    File name will include the ticker (required arg) and current timestamp.
+
+    :param dataframe:
+    :param ticker:
+    :return:
+    """
+    if dataframe is None:
+        raise EmptyDataError("Dataframe cannot be empty.")
+    if not ticker or ticker is None:
+        raise ValueError("Invalid ticker value.")
+
+    datafile = os.path.relpath("data/{}_data_{}.csv".format(ticker, time.time()))
+
+    try:
+        dataframe.to_csv(datafile, index=False)
+    except FileExistsError:
+        raise FileExistsError("Invalid datafile.")
+    finally:
+        print("File saved:\t{}".format(datafile))
