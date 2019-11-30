@@ -11,7 +11,7 @@ def run(alpaca_api):
     trading_symbol  = None
     trading         = False
     assets          = AssetSelector(alpaca_api, edgar_token=None).bearish_candlesticks(64, 20)
-    indicators      = Indicators(alpaca_api, assets).get_cluster()
+    indicators      = Indicators(alpaca_api, assets).get_all_asset_indicators()
 
     # trade decision here
     for i in indicators.keys():
