@@ -22,14 +22,17 @@ class Indicators:
         self.buying_power   = self.account.buying_power
         self.dataframe      = dataframe
 
-    def get_all_asset_indicators(self):
+    def get_all_asset_indicators(self, backdate=None):
         """Loop through collection of assets and append their indicators to the dataframe.
 
         :return: A pandas dataframe of ticker dataframes for each asset.
         """
+        if not backdate or backdate is None:
+            backdate = time_formatter(time.time() - (604800 * 13))
+
         for ticker in self.dataframe.keys():
             try:
-                self.dataframe[ticker] = self.get_ticker_indicators(ticker)
+                self.dataframe[ticker] = self.get_ticker_indicators(ticker, backdate=backdate)
             except EmptyDataError:
                 raise EmptyDataError
             except IndicatorException:
@@ -54,122 +57,136 @@ class Indicators:
         bars                        = self.get_bars(ticker, backdate)
         data                        = set_candlestick_df(bars)
 
-        # grab individual indicator values
-        sma                         = self.get_sma(data)
-        smm                         = self.get_smm(data)
-        ssma                        = self.get_ssma(data)
-        ema                         = self.get_ema(data)
-        dema                        = self.get_dema(data)
-        tema                        = self.get_tema(data)
-        trima                       = self.get_trima(data)
-        trix                        = self.get_trix(data)
-        vama                        = self.get_vama(data)
-        er                          = self.get_er(data)
-        kama                        = self.get_kama(data)
-        zlema                       = self.get_zlema(data)
-        wma                         = self.get_wma(data)
-        hma                         = self.get_hma(data)
-        # evwma                       = self.get_evwma(data)
-        vwap                        = self.get_vwap(data)
-        smma                        = self.get_smma(data)
-        macd                        = self.get_macd(data)
-        ppo                         = self.get_ppo(data)
-        vwmacd                      = self.get_vwmacd(data)
-        # evmacd                      = self.get_evmacd(data)
-        mom                         = self.get_mom(data)
-        roc                         = self.get_roc(data)
-        rsi                         = self.get_rsi(data)
-        ift_rsi                     = self.get_ift_rsi(data)
-        tr                          = self.get_tr(data)
-        atr                         = self.get_atr(data)
-        sar                         = self.get_sar(data)
-        bbands                      = self.get_bbands(data)
-        bandwidth                   = self.get_bbandwidth(data)
-        percent_b                   = self.get_percent_b(data)
-        kc                          = self.get_kc(data)
-        # do                          = self.get_do(data)
-        # dmi                         = self.get_dmi(data)
-        adx                         = self.get_adx(data)
-        mfi                         = self.get_mfi(data)
-        stoch                       = self.get_stoch(data)
-        vzo                         = self.get_vzo(data)
-        apz                         = self.get_apz(data)
-        # separate indicators that consist of multiple values
-        _macds                      = macd["MACD"]
-        _signals                    = macd["SIGNAL"]
-        _ppo                        = ppo["PPO"]
-        _pposig                     = ppo["SIGNAL"]
-        _ppohist                    = ppo["HISTO"]
-        _vmacds                     = vwmacd["MACD"]
-        _vsignals                   = vwmacd["SIGNAL"]
-        # _evmacds                    = evmacd["MACD"]
-        # _evsignals                  = evmacd["SIGNAL"]
-        _bb_up                      = bbands["BB_UPPER"]
-        _bb_mid                     = bbands["BB_MIDDLE"]
-        _bb_low                     = bbands["BB_LOWER"]
-        _kc_upper                   = kc["KC_UPPER"]
-        _kc_lower                   = kc["KC_LOWER"]
-        # _do_upper                   = do["UPPER"]
-        # _do_middle                  = do["MIDDLE"]
-        # _do_lower                   = do["LOWER"]
-        # _dmi_p                      = dmi["DI+"]
-        # _dmi_m                      = dmi["DI-"]
-        _apz_u                      = apz["UPPER"]
-        _apz_l                      = apz["LOWER"]
-        # set dataframe values we want to return
-        data["sma"]                 = sma
-        data["smm"]                 = smm
-        data["ssma"]                = ssma
-        data["ema"]                 = ema
-        data["dema"]                = dema
-        data["tema"]                = tema
-        data["trima"]               = trima
-        data["trix"]                = trix
-        data["vama"]                = vama
-        data["er"]                  = er
-        data["kama"]                = kama
-        data["zlema"]               = zlema
-        data["wma"]                 = wma
-        data["hma"]                 = hma
-        # data["evwma"]               = evwma
-        data["vwap"]                = vwap
-        data["smma"]                = smma
-        data["macd"]                = _macds
-        data["signal"]              = _signals
-        data["ppo"]                 = _ppo
-        data["ppo_sig"]             = _pposig
-        data["ppo_histo"]           = _ppohist
-        data["vwmacd"]              = _vmacds
-        data["vwsignal"]            = _vsignals
-        # data["evmacd"]              = _evmacds
-        # data["evsignal"]            = _evsignals
-        data["mom"]                 = mom
-        data["roc"]                 = roc
-        data["rsi"]                 = rsi
-        data["ift_rsi"]             = ift_rsi
-        data["tr"]                  = tr
-        data["atr"]                 = atr
-        data["sar"]                 = sar
-        data["bb_up"]               = _bb_up
-        data["bb_mid"]              = _bb_mid
-        data["bb_low"]              = _bb_low
-        data["bandwidth"]           = bandwidth
-        data["percent_b"]           = percent_b
-        data["kc_upper"]            = _kc_upper
-        data["kc_lower"]            = _kc_lower
-        # data["do_upper"]            = _do_upper
-        # data["do_middle"]           = _do_middle
-        # data["do_lower"]            = _do_lower
-        # data["dmi_p"]               = _dmi_p
-        # data["dmi_m"]               = _dmi_m
-        data["adx"]                 = adx
-        data["mfi"]                 = mfi
-        data["stoch"]               = stoch
-        data["vzo"]                 = vzo
-        data["apz_u"]               = _apz_u
-        data["apz_l"]               = _apz_l
+        try:
+            # grab individual indicator values
+            data["sma"]                 = self.get_sma(data)
+            data["smm"]                 = self.get_smm(data)
+            data["ssma"]                = self.get_ssma(data)
+            data["ema"]                 = self.get_ema(data)
+            data["dema"]                = self.get_dema(data)
+            data["tema"]                = self.get_tema(data)
+            data["trima"]               = self.get_trima(data)
+            data["trix"]                = self.get_trix(data)
+            data["vama"]                = self.get_vama(data)
+            data["er"]                  = self.get_er(data)
+            data["kama"]                = self.get_kama(data)
+            data["zlema"]               = self.get_zlema(data)
+            data["wma"]                 = self.get_wma(data)
+            data["wma"]                 = self.get_wma(data)
+            data["vwap"]                = self.get_vwap(data)
+            data["smma"]                = self.get_smma(data)
+            macd                        = self.get_macd(data)
+            data["macd"]                = macd["MACD"]
+            data["signal"]              = macd["SIGNAL"]
+            ppo                         = self.get_ppo(data)
+            data["ppo"]                 = ppo["PPO"]
+            data["ppo_sig"]             = ppo["SIGNAL"]
+            data["ppo_histo"]           = ppo["HISTO"]
+            vwmacd                      = self.get_vwmacd(data)
+            data["vwmacd"]              = vwmacd["MACD"]
+            data["vwsignal"]            = vwmacd["SIGNAL"]
+            data["mom"]                 = self.get_mom(data)
+            data["roc"]                 = self.get_roc(data)
+            data["rsi"]                 = self.get_rsi(data)
+            data["ift_rsi"]             = self.get_ift_rsi(data)
+            data["tr"]                  = self.get_tr(data)
+            data["atr"]                 = self.get_atr(data)
+            data["sar"]                 = self.get_sar(data)
+            bbands                      = self.get_bbands(data)
+            data["bb_up"]               = bbands["BB_UPPER"]
+            data["bb_mid"]              = bbands["BB_MIDDLE"]
+            data["bb_low"]              = bbands["BB_LOWER"]
+            data["bandwidth"]           = self.get_bbandwidth(data)
+            data["percent_b"]           = self.get_percent_b(data)
+            kc                          = self.get_kc(data)
+            data["kc_up"]               = kc["KC_UPPER"]
+            data["kc_low"]              = kc["KC_LOWER"]
+            pivot                       = self.get_pivot(data)
+            data["pivot"]               = pivot["pivot"]
+            data["pivot_s1"]            = pivot["s1"]
+            data["pivot_s2"]            = pivot["s2"]
+            data["pivot_s3"]            = pivot["s3"]
+            data["pivot_s4"]            = pivot["s4"]
+            data["pivot_r1"]            = pivot["r1"]
+            data["pivot_r2"]            = pivot["r2"]
+            data["pivot_r3"]            = pivot["r3"]
+            data["pivot_r4"]            = pivot["r4"]
+            pivot_fib                   = self.get_pivot_fib(data)
+            data["pivot_fib"]           = pivot_fib["pivot"]
+            data["pivot_fib_s1"]        = pivot_fib["s1"]
+            data["pivot_fib_s2"]        = pivot_fib["s2"]
+            data["pivot_fib_s3"]        = pivot_fib["s3"]
+            data["pivot_fib_s4"]        = pivot_fib["s4"]
+            data["pivot_fib_r1"]        = pivot_fib["r1"]
+            data["pivot_fib_r2"]        = pivot_fib["r2"]
+            data["pivot_fib_r3"]        = pivot_fib["r3"]
+            data["pivot_fib_r4"]        = pivot_fib["r4"]
+            data["stoch"]               = self.get_stoch(data)
+            data["stochd"]              = self.get_stochd(data)
+            data["stoch_rsi"]           = self.get_stoch_rsi(data)
+            data["williams"]            = self.get_williams(data)
+            data["uo"]                  = self.get_uo(data)
+            data["ao"]                  = self.get_ao(data)
+            data["mi"]                  = self.get_mi(data)
+            vortex                      = self.get_vortex(data)
+            data["vortex_p"]            = vortex["VIp"]
+            data["vortex_m"]            = vortex["VIm"]
+            kst                         = self.get_kst(data)
+            data["kst"]                 = kst["KST"]
+            data["kst_sig"]             = kst["signal"]
+            tsi                         = self.get_tsi(data)
+            data["tsi"]                 = tsi["TSI"]
+            data["tsi_sig"]             = tsi["signal"]
+            data["tp"]                  = self.get_tp(data)
+            data["adl"]                 = self.get_adl(data)
+            data["chaikin"]             = self.get_chaikin(data)
+            data["mfi"]                 = self.get_mfi(data)
+            data["obv"]                 = self.get_obv(data)
+            data["wobv"]                = self.get_wobv(data)
+            data["vzo"]                 = self.get_vzo(data)
+            data["pzo"]                 = self.get_pzo(data)
+            data["efi"]                 = self.get_efi(data)
+            data["cfi"]                 = self.get_cfi(data)
+            ebbp                        = self.get_ebbp(data)
+            data["ebbp_bull"]           = ebbp["Bull."]
+            data["ebbp_bear"]           = ebbp["Bear."]
+            data["emv"]                 = self.get_emv(data)
+            data["cci"]                 = self.get_cci(data)
+            data["copp"]                = self.get_copp(data)
+            basp                        = self.get_basp(data)
+            data["basp_buy"]            = basp["Buy."]
+            data["basp_sell"]           = basp["Sell."]
+            baspn                       = self.get_baspn(data)
+            data["baspn_buy"]           = baspn["Buy."]
+            data["baspn_sell"]          = baspn["Sell."]
+            data["cmo"]                 = self.get_cmo(data)
+            chandelier                  = self.get_chandelier(data)
+            data["chand_long"]          = chandelier["Long."]
+            data["chand_short"]         = chandelier["Short."]
+            data["qstick"]              = self.get_qstick(data)
+            wto                         = self.get_wto(data)
+            data["wt1"]                 = wto["WT1."]
+            data["wt2"]                 = wto["WT2."]
+            data["fish"]                = self.get_fish(data)
+            ichi                        = self.get_ichimoku(data)
+            data["tenkan"]              = ichi["TENKAN"]
+            data["kijun"]               = ichi["KIJUN"]
+            data["senkou_span_a"]       = ichi["senkou_span_a"]
+            data["senkou_span_b"]       = ichi["SENKOU"]
+            data["chikou"]              = ichi["CHIKOU"]
+            apz                         = self.get_apz(data)
+            data["apz_up"]              = apz["UPPER"]
+            data["apz_low"]             = apz["LOWER"]
+            data["squeeze"]             = self.get_squeeze(data)
+            data["vpt"]                 = self.get_vpt(data)
+            data["fve"]                 = self.get_fve(data)
+            data["vfi"]                 = self.get_fve(data)
+            data["msd"]                 = self.get_msd(data)
 
-        return data
+        except IndicatorException:
+            print("[?] Lets see what just continuing does...")
+        else:
+            return data
 
     def get_bars(self, ticker, backdate=None):
         """Get bars for a ticker symbol
@@ -726,16 +743,31 @@ class Indicators:
         return result
 
     @staticmethod
-    def get_mfi(data):
-        """Calculate the money flow index of given dataframe.
+    def get_pivot(data):
+        """Calculate pivot point.
 
         :param data: a dataframe in OHLC format
-        :return: a Pandas series
+        :return: a concatenated Pandas series with 9 elements
         """
         if data is None:
             raise EmptyDataError("Invalid data value")
 
-        result = TA.MFI(data)
+        result = TA.PIVOT(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_pivot_fib(data):
+        """Calculate Fibonacci pivot point.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series with 9 elements
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.PIVOT_FIB(data)
         if result is None:
             raise IndicatorException
         return result
@@ -756,6 +788,231 @@ class Indicators:
         return result
 
     @staticmethod
+    def get_stochd(data):
+        """Calculate the stochastic oscillator %D for given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.STOCHD(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_stoch_rsi(data):
+        """Calculate the stochastic relative strength index for given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.STOCHRSI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_williams(data):
+        """Calculate the Williams oscillator for given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.WILLIAMS(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_uo(data):
+        """Calculate the ultimate oscillator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.UO(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_ao(data):
+        """Calculate the awesome oscillator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.AO(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_mi(data):
+        """Calculate the mass index of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.MI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_vortex(data):
+        """Calculate the vortex of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.VORTEX(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_kst(data):
+        """Calculate the known sure thing oscillator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.KST(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_tsi(data):
+        """Calculate the true strength index of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.TSI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_tp(data):
+        """Calculate the typical price of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.TP(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_adl(data):
+        """Calculate the accumulation/distribution line of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.ADL(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_chaikin(data):
+        """Calculate the Chaikin oscillator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.CHAIKIN(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_mfi(data):
+        """Calculate the money flow index of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.MFI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_obv(data):
+        """Calculate the on balance volume of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.OBV(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_wobv(data):
+        """Calculate the weighted on balance volume of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.WOBV(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
     def get_vzo(data):
         """Calculate the volume zone oscillator for given dataframe.
 
@@ -771,8 +1028,8 @@ class Indicators:
         return result
 
     @staticmethod
-    def get_apz(data):
-        """Calculate the adaptive price zone of given dataframe.
+    def get_pzo(data):
+        """Calculate the pricing zone oscillator of given dataframe.
 
         :param data: a dataframe in OHLC format
         :return: a Pandas series
@@ -780,7 +1037,337 @@ class Indicators:
         if data is None:
             raise EmptyDataError("Invalid data value")
 
+        result = TA.PZO(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_efi(data):
+        """Calculate the Elder's force index of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.EFI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_cfi(data):
+        """Calculate the cumulative force index of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.CFI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_ebbp(data):
+        """Calculate the bull power and bear power of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.EBBP(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_emv(data):
+        """Calculate the ease of movement of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.EMV(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_cci(data):
+        """Calculate the commodity channel index of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.CCI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_copp(data):
+        """Calculate the Coppock curve of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.COPP(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_basp(data):
+        """Calculate the buying and selling pressure of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.BASP(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_baspn(data):
+        """Calculate the normalized buying and selling pressure of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.BASPN(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_cmo(data):
+        """Calculate the Chande momentum oscillator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.CMO(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_chandelier(data):
+        """Calculate the chandelier exit indicator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.CHANDELIER(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_qstick(data):
+        """Calculate the QStick indicator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.QSTICK(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_tmf(data):
+        """Calculate the Twigg's money flow of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.TMF(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_wto(data):
+        """Calculate the wave trend oscillator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.WTO(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_fish(data):
+        """Calculate the Fisher transform of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.FISH(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_ichimoku(data):
+        """Calculate the Ichimoku cloud of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.ICHIMOKU(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_apz(data):
+        """Calculate the adaptive price zone of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a concatenated Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
         result = TA.APZ(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_vr(data):
+        """Calculate the vector size indicator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.VR(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_squeeze(data):
+        """Calculate the squeeze momentum indicator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.SQZMI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_vpt(data):
+        """Calculate the volume price trend of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.VPT(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_fve(data):
+        """Calculate the finite volume element of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.FVE(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_vfi(data):
+        """Calculate the volume flow indicator of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.VFI(data)
+        if result is None:
+            raise IndicatorException
+        return result
+
+    @staticmethod
+    def get_msd(data):
+        """Calculate the standard deviation of given dataframe.
+
+        :param data: a dataframe in OHLC format
+        :return: a Pandas series
+        """
+        if data is None:
+            raise EmptyDataError("Invalid data value")
+
+        result = TA.MSD(data)
         if result is None:
             raise IndicatorException
         return result
