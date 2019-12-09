@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from src.asset_selector import AssetSelector
-from src.indicators import Indicators
+from src.indicator_collection import IndicatorCollection as Indicators
 from src.edgar_interface import EdgarInterface
 from src.twitter_interface import TwitterInterface
 from src.sentiment_analysis import SentimentAnalysis as Sent
