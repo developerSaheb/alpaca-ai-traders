@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from src.finta_interface import Indicator as IG, IndicatorException as IError
-from util import time_formatter, set_candlestick_df
+from src.util import time_formatter, set_candlestick_df
 from requests.exceptions import HTTPError
 from pandas.errors import EmptyDataError
-import src.twitter_interface as twitter
 import time
 
 class IndicatorCollectionException(Exception):

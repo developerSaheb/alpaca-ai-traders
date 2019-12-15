@@ -3,6 +3,7 @@
 from pandas.errors import EmptyDataError
 from finta import TA
 
+
 class IndicatorException(Exception):
     pass
 
@@ -272,16 +273,18 @@ class Indicator:
         return result
 
     @staticmethod
-    def get_macd(data):
+    def get_macd(data, period_fast=12, period_slow=26):
         """Calculate the moving average convergence-divergence for values of given dataframe.
 
         :param data: a dataframe in OHLC format
+        :param period_fast: number of days to look back for the fast moving average
+        :param period_slow: number of days to look back for the slow moving average
         :return: a concatenated Pandas series with the MACD and signal values
         """
         if data is None:
             raise EmptyDataError("[!] Invalid data value")
 
-        result = TA.MACD(data)
+        result = TA.MACD(data, period_fast, period_slow)
         if result is None:
             raise IndicatorException
         return result

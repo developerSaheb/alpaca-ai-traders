@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 from src.asset_selector import AssetSelector
 from src.indicator_collection import IndicatorCollection as Indicators
-from util import submit_order, time_formatter
+from src.util import bullish_sequence, submit_order, time_formatter
 import time
 
 def run(alpaca_api):
 
     # initial trade state
-    trading_symbol  = None
     trading         = False
+    trading_symbol  = None
     assets          = AssetSelector(alpaca_api, edgar_token=None).bullish_candlesticks(64, 1)
     indicators      = Indicators(alpaca_api, assets).get_all_asset_indicators(backdate=time_formatter(time.time() - (604800 * 54)))
 
@@ -17,16 +17,20 @@ def run(alpaca_api):
     for i in indicators.keys():
 
         instrument = indicators[i]
-
-        # do the processing for machine learning and see which one (if any) to trade
-        # TODO: implement machine learning
+        # check if the last three closing prices are a bullish sequence
+        if bullish_sequence(instrument["close"].iloc[-3], instrument["close"].iloc[-2], instrument["close"].iloc[-1]):
+            # if bullish, check the most recent moving average convergence-divergence
+            # has the MACD crossed over its signal and is the MACD percentage change is positive?
+            if instrument["macd"].iloc[-1] > instrument["signal"].iloc[-1]:
+                # if so, execute a trade
+                trading = True
+                trading_symbol = str(i)
 
         if trading_symbol is not None:
             break
 
-    # debugging line that forces the trade to not be made
+    # debug
     print("[?] Trading: ", trading is True)
-    trading = False
     if trading is True:
         # decide how much to buy # TODO
         quant = 10

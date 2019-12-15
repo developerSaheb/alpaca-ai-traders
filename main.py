@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from algos import bullish_candlestick
+from src.algos import bullish_candlestick
 import alpaca_trade_api as tradeapi
 import configparser
 import twitter

@@ -3,10 +3,7 @@
 from src.asset_selector import AssetSelector
 from src.indicator_collection import IndicatorCollection as Indicators
 from src.edgar_interface import EdgarInterface
-from src.twitter_interface import TwitterInterface
-from src.sentiment_analysis import SentimentAnalysis as Sent
-from src.predictor import Predictor
-from util import time_formatter, submit_order
+from src.util import time_formatter, submit_order
 import time
 
 def run(alpaca_api, edgar_token):

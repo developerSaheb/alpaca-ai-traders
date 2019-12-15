@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from src.asset_selector import AssetSelector
 from src.indicator_collection import IndicatorCollection as Indicators
-from util import submit_order, time_formatter
+from src.util import submit_order, time_formatter
 import time
 
 def run(alpaca_api):

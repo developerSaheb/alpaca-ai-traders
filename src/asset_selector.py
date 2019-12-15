@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from util import bullish_candlestick_patterns, time_formatter, num_bars, set_candlestick_df
+from src.util import bullish_candlestick_patterns, time_formatter, num_bars, set_candlestick_df
 from src.trade_signal import TradeSignal as TS, TradeSignalException as TSError
-from src.finta_interface import Indicator as indicators
 from src.edgar_interface import EdgarInterface
 from requests.exceptions import HTTPError
 import inspect
