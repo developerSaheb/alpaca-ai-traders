@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from src.asset_selector import AssetSelector
-from src.indicators import Indicators
+from src.indicator_collection import IndicatorCollection as Indicators
 from util import bullish_sequence, submit_order, time_formatter
 import time
 
